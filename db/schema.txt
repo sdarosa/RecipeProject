@@ -1,0 +1,33 @@
+create database steph_recipes;
+use steph_recipes;
+create table recipe (
+	id integer not null primary key auto_increment,
+	title varchar(100),
+	image_path varchar(200),
+	instructions text,	
+	prep_time time,
+	cook_time time,
+	serves varchar(50)	
+);
+create table ingredient (
+	id integer not null primary key auto_increment,
+	recipe_id integer not null,
+	item varchar(500) not null	
+);
+create table category (
+	id integer not null primary key auto_increment,
+	name varchar(100)
+);
+create table recipe_category (	
+	recipe_id integer not null,
+	category_id integer not null
+);
+
+select * from recipe;
+
+
+
+select r.title, c.name
+from recipe r
+	join recipe_category rc on r.id = rc.recipe_id
+	join category c on c.id = rc.category_id;
