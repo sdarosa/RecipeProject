@@ -1,0 +1,10 @@
+{
+    "name" : "Recipes App",
+    "version" : "0.0.0",
+    "description" : "Simple Recipe App",
+    "main" : "app.js",
+    "author" : "Steph",
+    "dependencies" : {
+        "mysql" : "2.10.2"
+    }  
+}

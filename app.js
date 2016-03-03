@@ -1,26 +1,35 @@
+//*************** setup *************
+var port = process.env.PORT || 8888;
+var http = require('http');
+var fs = require('fs');
+var url = require('url');
 var mysql = require('mysql');
+
+//mysql connection settings
 var connection = mysql.createConnection({
     host : 'localhost',
     user : 'root',
-    password : 'Primavera2014',
+    password : '',
     database : 'sample_db'
 });
 
-connection.connect(function(err) {
-    if(err) {
-        console.error('error connecting: ' + err.stack);
-        return;
-    }
-    console.log('connected as id ' + connection.threadId);
-});
 
-connection.query('select * from table1', function(err, results, fields) {
-    if(err) {
-        console.log('there was an error');
-    }
-    for(var i=0; i<results.length; i++) {
-        console.log('id: ' + results[i].id + ' name: ' + results[i].name);
-    }
-});
+require('./config/database.js')(connection);
 
-connection.end();
+//hosting config
+http.createServer(function(req, res) {
+    var pathName = url.parse(req.url).pathname;
+    console.log('request for ' + pathName + ' received.');
+    
+    fs.readFile(pathName.substr(1), function(err, data) {
+        if(err) {
+            console.log(err);
+            res.writeHead(404, {'Content-Type':'text/html'});
+        } else {
+            res.writeHead(200, {'Content-Type':'text/html'});
+            res.write(data.toString());
+        }
+        res.end();
+    });   
+}).listen(port, "127.0.0.1");
+console.log('server running at http://127.0.0.1:' + port);
