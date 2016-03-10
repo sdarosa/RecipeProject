@@ -9,8 +9,8 @@
         <div class="col-md-4"><h4>Serves</h4></div>
     </div>
     <div class="row">
-        <div class="col-md-4">{{ d.prepTime }} mins</div>
-        <div class="col-md-4">{{ d.cookTime }} mins</div>
+        <div class="col-md-4">{{ d.prep_time }} mins</div>
+        <div class="col-md-4">{{ d.cook_time }} mins</div>
         <div class="col-md-4">{{ d.serves }} people</div>
     </div>
     <div class="vspacer"></div>
@@ -22,15 +22,13 @@
                 <li class="list-group-item" ng-repeat="i in d.ingredients">{{ i }}</li>                
             </ul>
         </div>
-        <div class="col-md-6"><img ng-src="{{ d.imagePath }}" class="img-thumbnail"></div>
+        <div class="col-md-6"><img ng-src="{{ d.image_path }}" class="img-thumbnail"></div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
             <h3>Instructions</h3>
-            <ol>
-                <li ng-repeat="instr in d.instructions">{{ instr }}</li>
-            </ol>
+            <p>{{ d.instructions }}</p>            
         </div>  
     </div>
     <div class="vspacer"></div>

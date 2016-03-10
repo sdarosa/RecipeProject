@@ -8,26 +8,35 @@ recipeApp.config(function($routeProvider) {
             controller : 'mainController'
         })
         .when('/recipes', {
-            templateUrl : 'pages/allrecipes.html',
+            templateUrl :'pages/allrecipes.html',
             controller : 'allRecipesController'
         });
 });
 
-//services
-recipeApp.service('recipeData', function() {
-    this.data = JSON.parse(convertToJson());
-});
-
 
 //controllers
-recipeApp.controller('mainController', ['$scope', 'recipeData', function($scope, recipeData) {
-    $scope.data =  recipeData.data; 
+recipeApp.controller('mainController', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
     
-    
+    $http.get('api/allrecipenames')
+        .success(function(data) {
+            $scope.data = data;
+        })
+        .error(function(err) {
+            console.log('Error trying to retrieve all recipe titles: ' + err);
+        });    
 }]);
 
-recipeApp.controller('allRecipesController', ['$scope', 'recipeData', function($scope, recipeData) {
-    $scope.data = recipeData.data;    
+recipeApp.controller('allRecipesController', ['$scope', '$http', function($scope, $http) {
+    $scope.data = {};
+    
+    $http.get('api/allrecipedata')
+        .success(function(data) {
+            $scope.data = data;
+        })
+        .error(function(err) {
+            console.log('Error trying to retrieve all recipe data: ' + err);
+        });
 }]);
 
 
