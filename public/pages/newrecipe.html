@@ -1,0 +1,61 @@
+<h1 class="text-center">Create New Recipe</h1>
+
+<form id="recipeForm" method="post" action="/api/newrecipe" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Creamy Pesto Mac with Spinach">
+            </div>
+        </div>
+        <div class="col-md-4">            
+            <div class="form-group">
+                <label>Prep Time (mins)</label>
+                <input type="text" class="form-control" name="preptime" placeholder="15">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Cook Time (mins)</label>
+                <input type="text" class="form-control" name="cooktime" placeholder="15">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Servings</label>
+                <input type="text" class="form-control" id="serves" name="serves" placeholder="6 (1 cup each)">
+            </div>
+        </div>
+        
+        <div class="col-md-12">
+            <label>Categories</label><br/>
+            <div class="checkbox-inline" ng-repeat="cat in categoryData">
+                <label><input type="checkbox" name="category{{ cat.categoryId }}">{{ cat.categoryName }}</label>
+            </div>                      
+        </div>
+        <div class="col-md-12">
+            <label>Ingredients (one per line)</label>
+            <textarea class="form-control" rows="5" name="ingredients"></textarea>
+        </div>
+        <div class="col-md-12">
+            <label>Directions</label>
+            <textarea class="form-control" rows="5" name="directions"></textarea>
+        </div>
+        <div class="col-md-12">
+            <label>Upload Image</label>
+            <div class="input-group">                
+                <span class="input-group-btn">
+                    <span class="btn btn-primary btn-file">
+                        Browse&hellip; <input type="file" name="userphoto" accept="application/x-zip-compressed,image/*">
+                    </span>
+                </span>
+                <input type="text" id="fileName" class="form-control" name="filename" readonly>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button class="btn btn-primary btn-lg" type="submit">Create New Recipe</button>
+        </div>
+    </div>
+</form>
+
+<p>

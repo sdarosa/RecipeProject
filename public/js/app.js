@@ -10,6 +10,10 @@ recipeApp.config(function($routeProvider) {
         .when('/recipes', {
             templateUrl :'pages/allrecipes.html',
             controller : 'allRecipesController'
+        })
+        .when('/newrecipe', {
+            templateUrl: 'pages/newrecipe.html',
+            controller: 'newRecipeController'
         });
 });
 
@@ -30,7 +34,7 @@ recipeApp.controller('mainController', ['$scope', '$http', function($scope, $htt
 recipeApp.controller('allRecipesController', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     
-    $http.get('api/allrecipedata')
+    $http.get('/api/allrecipedata')
         .success(function(data) {
             $scope.data = data;
         })
@@ -38,5 +42,36 @@ recipeApp.controller('allRecipesController', ['$scope', '$http', function($scope
             console.log('Error trying to retrieve all recipe data: ' + err);
         });
 }]);
+
+recipeApp.controller('newRecipeController', ['$scope', '$http', function($scope, $http) { 
+    $scope.categoryData = {};
+    //get category data to populate the category section of the new recipe form
+    $http.get('/api/categoryList')
+        .success(function(categoryData) {
+            $scope.categoryData = categoryData;
+        })
+        .error(function(err) {
+            console.log('Error trying to get category data into new recipe form: ' + err);
+        });
+    
+    
+    // $scope.formData = {};
+    // Object.keys($scope.formData).forEach(function(key) {
+    //     $scope.formData.append(key, $scope.formData[key]);
+    // });    
+    // //create a new recipe & add it to db
+    // $scope.createNewRecipe = function() {
+    //     $http.post('/api/newrecipe', $scope.formData)        
+    //        .success(function(data) {
+    //             console.log('posted successfully.');
+    //             console.log($scope.formData);
+    //        })
+    //        .error(function(err) {
+    //             console.log('Error: ' + err);
+    //           });
+    // };  
+}]);
+
+
 
 
