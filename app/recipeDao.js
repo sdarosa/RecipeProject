@@ -3,18 +3,21 @@ var mysql = require('mysql');
 
 module.exports = new RecipeDao();
 
+var connectionSettings = {
+    host : 'localhost',
+    user : 'root',
+    password : '',
+    database : 'recipesdb001'
+};
+
 function RecipeDao() {
     
-    var conn = mysql.createConnection({
-        host : 'localhost',
-        user : 'root',
-        password : '',
-        database : 'recipesdb001'
-    });     
     
 }
 
-RecipeDao.prototype.getCategoryListFromDb = function(conn, callback) {
+RecipeDao.prototype.getCategoryListFromDb = function(callback) {
+    var conn = mysql.createConnection(connectionSettings);     
+    
     var categoryList = new Map();
     var categoryQuery = 'select category_id, category_name from category';
     

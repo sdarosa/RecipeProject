@@ -12,6 +12,7 @@ var conn = mysql.createConnection({
 });     
 
 module.exports = function(app) {
+    
     app.get('/api/allrecipenames', function(req, res) {       
         conn.query('select title from recipe', function(err, rows) {
            if(err) {

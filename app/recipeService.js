@@ -13,15 +13,10 @@ function RecipeService() {
 
 
 RecipeService.prototype.getCategoryList = function(callback) {
-    var conn = mysql.createConnection({
-        host : 'localhost',
-        user : 'root',
-        password : '',
-        database : 'recipesdb001'
-    });     
+    
     var categoryList;   
     
-    recipeDao.getCategoryListFromDb(conn, function(catList) { 
+    recipeDao.getCategoryListFromDb(function(catList) { 
         categoryList = catList;
         //print it 
         // console.log('Category List from the Service:\n');
