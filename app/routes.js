@@ -14,7 +14,7 @@ var conn = mysql.createConnection({
 module.exports = function(app) {
     
     app.get('/api/allrecipenames', function(req, res) {       
-        conn.query('select title from recipe', function(err, rows) {
+        conn.query('select recipe_id, title from recipe', function(err, rows) {
            if(err) {
                console.log("there was an error trying to execute a query: " + err);
                return;
@@ -29,8 +29,15 @@ module.exports = function(app) {
        });   
     });
     
-    app.get('/api/allrecipedata', function(req, res) {
-        
+    app.get('/api/recipe/:id', function(req,res) {
+        var id = req.params.id;        
+        recipeService.getRecipeGivenId(id, function(data) {           
+            var recipeObject = data.convertToObjectWithArrays();
+            res.json(recipeObject);            
+        });
+    });
+    
+    app.get('/api/allrecipedata', function(req, res) {        
         var q = "select i.recipe_id, i.ingredient_id, c.category_id, r.title, r.image_path, r.directions, r.prep_time, r.cook_time, r.serves,  i.item, c.category_name " +
                 "from recipe r " +
                 "join ingredient i on r.recipe_id = i.recipe_id " +
@@ -104,7 +111,7 @@ module.exports = function(app) {
                 categoryIdsSelected.push(i);
             }
         }       
-        //when you pass methods to other functions, you need to bind them first
+       
         var query1 = function() {
             var d = Q.defer();
             conn.query(recipeQuery, recipeTableValues, function(err, result) {

@@ -14,6 +14,10 @@ recipeApp.config(function($routeProvider) {
         .when('/newrecipe', {
             templateUrl: 'pages/newrecipe.html',
             controller: 'newRecipeController'
+        })
+        .when('/onerecipe/:id', {
+            templateUrl: 'pages/onerecipe.html',
+            controller: 'oneRecipeController'
         });
 });
 
@@ -40,6 +44,18 @@ recipeApp.controller('allRecipesController', ['$scope', '$http', function($scope
         })
         .error(function(err) {
             console.log('Error trying to retrieve all recipe data: ' + err);
+        });
+}]);
+
+recipeApp.controller('oneRecipeController', ['$scope', '$http', '$routeParams', function($scope, $http, $routeParams) {   
+    $scope.recipeId = $routeParams.id || -1;
+    $scope.data = {};
+    $http.get('/api/recipe/' + $scope.recipeId)
+        .success(function(data) {
+            $scope.data = data;
+        })
+        .error(function(err) {
+            console.log('Error trying to get one recipe with id: ' + $routeParams.id);
         });
 }]);
 

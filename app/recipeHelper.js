@@ -7,7 +7,7 @@ function RecipeHelper() {
 }
 
 RecipeHelper.prototype.addNewRecipe = function(r) {
-    this.recipeMap.set(r.recipeId, new Recipe(r.title, r.imagePath, r.directions, r.prepTime, r.cookTime, r.serves));
+    this.recipeMap.set(r.recipeId, new Recipe(r.id, r.title, r.imagePath, r.directions, r.prepTime, r.cookTime, r.serves));
     //add ingredient & category
     this.recipeMap.get(r.recipeId).addIngredient(r.ingredientId, r.ingredient);
     this.recipeMap.get(r.recipeId).addCategory(r.categoryId, r.category);    

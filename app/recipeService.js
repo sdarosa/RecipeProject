@@ -5,17 +5,14 @@ var recipeDao = require('./recipeDao');
 
 module.exports = new RecipeService();
 
-function RecipeService() {
-    
+function RecipeService() {    
     
 }
 
 
 
-RecipeService.prototype.getCategoryList = function(callback) {
-    
-    var categoryList;   
-    
+RecipeService.prototype.getCategoryList = function(callback) {    
+    var categoryList;       
     recipeDao.getCategoryListFromDb(function(catList) { 
         categoryList = catList;
         //print it 
@@ -31,9 +28,17 @@ RecipeService.prototype.getCategoryList = function(callback) {
                 categoryName: value
             };
             categories.push(currentCategory);
-        }, categoryList);        
-       
+        }, categoryList);   
         callback(categories);
-        return;
     });        
+};
+
+RecipeService.prototype.getRecipeGivenId = function(id, callback) {
+    var recipeId = id;
+    recipeDao.getRecipeData(recipeId, function(recipeObject) {
+        console.log('\n\nhi from ReicpeService');
+        console.log('Recipe Object: ');
+        recipeObject.printIt();
+        callback(recipeObject);
+    });
 };
