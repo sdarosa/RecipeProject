@@ -1,6 +1,7 @@
 create database recipesdb001;
 use recipesdb001;
 
+drop table user_data;
 drop table recipe_category;
 drop table category;
 drop table ingredient;
@@ -8,6 +9,7 @@ drop table recipe;
 
 create table recipe (
 	recipe_id integer not null primary key auto_increment,
+	user_email varchar(500) not null,
 	title varchar(500),
 	image_path varchar(500),
 	directions longtext,	
@@ -28,12 +30,17 @@ create table recipe_category (
 	recipe_id integer not null,
 	category_id integer not null
 );
+create table user_data (
+	user_email varchar(500) not null primary key,
+	user_name varchar(500) not null,
+	user_password varchar(500) not null
+);
 
-select recipe_id from recipe
-order by recipe_id desc limit 1;
+insert into user_data (user_email, user_name, user_password) values ('stephania@mail.com', 'Steph', 'flores');
 
-insert into recipe (title, image_path, directions, prep_time, cook_time, serves) values (
+insert into recipe (title, user_email, image_path, directions, prep_time, cook_time, serves) values (
 'Weeknight Enchiladas',
+'stephania@mail.com',
 'images/weeknight_enchiladas.jpg',
 'Begin by making the sauce. In a small sauce pot, combine the chili powder, flour, and oil. Heat over a medium flame, while stirring, for one to two minutes to toast the spices and flour. Whisk in the water, tomato paste, cumin, garlic powder, and cayenne pepper. Allow the mixture to come to a simmer, at which point it will thicken. Once thick enough to coat a spoon, taste and add salt as needed (1/2 to ¾ tsp). Set the sauce aside.<br/>Toast the tortillas in a dry skillet over medium flame until they are just flecked with brown on each side. The tortillas should be slightly more firm, but still pliable enough to roll. Stack the tortillas on a clean plate as they come out of the skillet.<br/>Prepare a casserole dish by coating with non-stick spray, then spread a layer of enchilada sauce over the bottom (1/2 to 1 cup). Preheat the oven to 350 degrees.<br/>Add about ¼ cup of refried beans to each tortilla, plus a small pinch of shredded cheese. Roll the tortilla tightly around the beans and cheese, then place seam side down in the casserole dish. Continue until all of the tortillas are filled. Pour another ½ to 1 cup enchilada sauce over the rolled enchiladas in the dish, leaving some of the edges exposed so they can become brown and crispy. Top with the remaining shredded cheese.<br/>Bake the casserole in the oven for 25-30 minutes or until the sauce is thick and bubbly around the edges and the center is heated through. Top with thin slices of avocado and chopped cilantro leaves (or sliced green onions).',
 10,
@@ -56,8 +63,9 @@ insert into ingredient (recipe_id, item) values (1, '8 oz. Pepper Jack, shredded
 insert into ingredient (recipe_id, item) values (1, '1/2 large avocado, sliced thin');
 insert into ingredient (recipe_id, item) values (1, '1/4 bunch cilantro (or green onions)');
 
-insert into recipe (title, image_path, directions, prep_time, cook_time, serves) values (
+insert into recipe (title, user_email, image_path, directions, prep_time, cook_time, serves) values (
 'Oven Roasted Chicken Legs',
+'stephania@mail.com',
 'images/oven_roasted_chicken.jpg',
 'Preheat the oven to 300 degrees. Lightly coat the inside of a casserole dish with non-stick spray.<br/>Pat the chicken dry with a paper towel, then smear butter over the surface of the skin. Sprinkle the lemon pepper seasoning liberally over both sides of the chicken pieces. Place the seasoned chicken in the casserole dish.<br/>Cover the dish with aluminum foil and bake for one hour at 300 degrees. Baste the chicken once half way through. After one hour, remove the foil, baste again, and turn the heat up to 425 degrees. Continue to bake the chicken at the higher temperature for 20-30 minutes, or until the skin has achieved the desired level of brownness. Serve with the juices spooned over top or with bread for dipping.',
 10,
@@ -68,11 +76,11 @@ insert into recipe (title, image_path, directions, prep_time, cook_time, serves)
 insert into ingredient (recipe_id, item) values (2, '2 bone-in skin-on chicken legs');
 insert into ingredient (recipe_id, item) values (2, '1 Tbsp butter (room temperature)');
 
-insert into category (category_name) values ('Cookie');
 insert into category (category_name) values ('Breakfast');
 insert into category (category_name) values ('Lunch');
 insert into category (category_name) values ('Dinner');
 insert into category (category_name) values ('Dessert');
+insert into category (category_name) values ('Salad');
 insert into category (category_name) values ('Pasta');
 insert into category (category_name) values ('Soup');
 insert into category (category_name) values ('Side Dish');
@@ -89,26 +97,5 @@ insert into recipe_category (recipe_id, category_id) values (1, 11);
 insert into recipe_category (recipe_id, category_id) values (2, 3);
 insert into recipe_category (recipe_id, category_id) values (2, 13);
 
-select * from category;
+SELECT * FROM user_data;
 
-select * from ingredient;
-
-select * from recipe;
-
-select * from recipe_category;
-
-delete from recipe
-where recipe_id = 13;
-
-select c.name
-from category c
-join recipe_category rc on rc.category_id = c.category_id;
-
-
-insert into recipe_category (recipe_id, category_id) values (13, 1);
-
-
-select r.title, c.category_name
-from recipe r
-	join recipe_category rc on r.recipe_id = rc.recipe_id
-	join category c on c.category_id = rc.category_id;

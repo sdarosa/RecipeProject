@@ -11,6 +11,8 @@ var multer = require('multer');
 var path = require('path');
 var crypto = require('crypto');
 var mime = require('mime');
+var passport = require('passport'); //for user authentication
+var session = require('express-session');
 
 
 
@@ -35,6 +37,9 @@ var multerStorage = multer.diskStorage({
 });
 
 app.use(multer({ storage: multerStorage }).single('userphoto'));
+
+//required for passport
+
 
 //routes
 require('./app/routes.js')(app);

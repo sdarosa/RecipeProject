@@ -18,6 +18,10 @@ recipeApp.config(function($routeProvider) {
         .when('/onerecipe/:id', {
             templateUrl: 'pages/onerecipe.html',
             controller: 'oneRecipeController'
+        })
+        .when('/login', {
+            templateUrl: 'pages/login.html',
+            controller: 'userLoginController'
         });
 });
 
@@ -86,6 +90,10 @@ recipeApp.controller('newRecipeController', ['$scope', '$http', function($scope,
     //             console.log('Error: ' + err);
     //           });
     // };  
+}]);
+
+recipeApp.controller('userLoginController', ['$scope', function($scope) {
+    console.log('hi from userLoginController controller');
 }]);
 
 

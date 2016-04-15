@@ -5,12 +5,15 @@
   "main": "app.js",
   "author": "Steph",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
     "method-override": "^2.3.5",
     "mime": "^1.3.4",
     "multer": "^1.1.0",
     "mysql": "2.10.2",
+    "passport": "^0.3.2",
     "q": "^1.4.1"
   }
 }
