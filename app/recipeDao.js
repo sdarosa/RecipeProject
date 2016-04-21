@@ -35,6 +35,130 @@ RecipeDao.prototype.getRecipeNames = function(callback) {
     });    
 };
 
+RecipeDao.prototype.insertNewUser = function(userInfo, callback) {
+    var conn = mysql.createConnection(connectionSettings);     
+    
+    var userExists = function() {
+        var userEmail = userInfo.userEmail;
+        var userExistsQuery = "SELECT * FROM user_data WHERE user_email = ?";
+        var d = Q.defer();
+        conn.query(userExistsQuery, [userEmail], function(err, rows) {
+            if(rows.length > 0) {
+                //user already exists
+                d.resolve(true);
+            } else {
+                d.resolve(false);
+            }
+        });
+        return d.promise;
+    };
+    
+    var insertUser = function(userExists) {
+        if(!userExists) {
+            //insert new user
+            var newUser = {
+                user_email: userInfo.userEmail,
+                user_name: userInfo.userName,
+                user_password: userInfo.userPassword
+            };
+            var insertUserQuery = "INSERT INTO user_data SET ?";
+            conn.query(insertUserQuery, newUser, function(err, rows) {
+                if(err) {
+                    console.log('Error trying to insert new user into user_data table: ' + err);
+                    callback({message: err, id: -1});
+                }
+                console.log('Success inserting new user into table: ' + rows.insertId);
+                callback({message: 'Success', id: rows.insertId});                
+            });
+        } else {
+            callback({message:'user already exists', id: -1});
+        }
+    };    
+    userExists().then(insertUser);
+};
+
+RecipeDao.prototype.loginUser = function(userInfo, callback) {
+    var conn = mysql.createConnection(connectionSettings); 
+    var authenticateUserQuery = "SELECT user_id, user_name FROM user_data WHERE user_email = ? and user_password = ?";
+    
+    conn.query(authenticateUserQuery, [userInfo.userEmail, userInfo.userPassword], function(err, rows) {
+        if(err) {
+            console.log('Error running authenticateUserQuery: ' + err);
+            callback(true, null);
+        } 
+        if(rows.length > 0) {
+            var user = {
+                id: rows[0].user_id,
+                email: userInfo.userEmail,
+                name: rows[0].user_name
+            };            
+            callback(false, user);
+        }
+    });    
+};
+
+RecipeDao.prototype.findUser = function(userEmail, callback) {
+    var conn = mysql.createConnection(connectionSettings); 
+    var findUserQuery = "SELECT user_id, user_name FROM user_data WHERE user_email = ?";
+    var found = true;
+    conn.query(findUserQuery, [userEmail], function(err, rows) {
+        if(err) {
+            console.log('Error finding user with email: ' + userEmail);
+            callback(!found, null);
+        }
+        if(rows.length > 0) {
+            console.log('found user with email: ' + userEmail); 
+            var user = {
+                id: rows[0].user_id,
+                name: rows[0].user_name,
+                email: userEmail
+            };          
+            callback(found, user);
+        }
+    });
+}
+
+RecipeDao.prototype.getRecipesFromUserId = function(userId, callback) {
+    var conn = mysql.createConnection(connectionSettings);
+    var getRecipesQuery =   "select i.recipe_id, i.ingredient_id, c.category_id, r.title, r.image_path, r.directions, r.prep_time, r.cook_time, r.serves,  i.item, c.category_name " +
+                            "from recipe r " +
+                            "join ingredient i on r.recipe_id = i.recipe_id " +
+                            "join recipe_category rc on rc.recipe_id = r.recipe_id " +
+                            "join category c on c.category_id = rc.category_id " +
+                            "WHERE r.user_id = ? " +
+                            "order by i.recipe_id, i.ingredient_id, c.category_id asc";    
+    
+    conn.query(getRecipesQuery, [userId], function(err, rows) {
+        if(err) {
+            console.log('(recipeDao) Error get recipes from user with id: ' + userId + '. error: ' + err);
+            callback(null);
+        }
+        if(rows.length > 0) {
+            var myRecipeMap = new RecipeHelper();                    
+            for(var i=0; i<rows.length; i++) { 
+                var currentRecipeRow = {
+                    recipeId: rows[i].recipe_id,
+                    ingredientId: rows[i].ingredient_id,
+                    categoryId: rows[i].category_id, 
+                    title: rows[i].title,
+                    imagePath: rows[i].image_path,
+                    directions: rows[i].directions,
+                    prepTime: rows[i].prep_time,
+                    cookTime: rows[i].cook_time,
+                    serves: rows[i].serves,
+                    ingredient: rows[i].item,
+                    category: rows[i].category_name     
+                };
+                myRecipeMap.updateMap(currentRecipeRow);                           
+            } 
+            callback(myRecipeMap);
+        } else {
+            console.log('user has no recipes');
+            callback(null);
+        }        
+    });
+}
+
 RecipeDao.prototype.saveNewRecipe = function(recipeTableValues, ingredients, categoryIdsSelected, callback) {
     var conn = mysql.createConnection(connectionSettings); 
     
@@ -95,17 +219,17 @@ RecipeDao.prototype.saveNewRecipe = function(recipeTableValues, ingredients, cat
 
 RecipeDao.prototype.getAllRecipes = function(callback) {
     var q = "select i.recipe_id, i.ingredient_id, c.category_id, r.title, r.image_path, r.directions, r.prep_time, r.cook_time, r.serves,  i.item, c.category_name " +
-                "from recipe r " +
-                "join ingredient i on r.recipe_id = i.recipe_id " +
-                "join recipe_category rc on rc.recipe_id = r.recipe_id " +
-                "join category c on c.category_id = rc.category_id " +
-                "order by i.recipe_id, i.ingredient_id, c.category_id asc";        
+            "from recipe r " +
+            "join ingredient i on r.recipe_id = i.recipe_id " +
+            "join recipe_category rc on rc.recipe_id = r.recipe_id " +
+            "join category c on c.category_id = rc.category_id " +
+            "order by i.recipe_id, i.ingredient_id, c.category_id asc";        
     var conn = mysql.createConnection(connectionSettings);  
     conn.connect();               
     conn.query(q, function(err, rows) {
         if(err) {
-            console.log("There was an error trying to execute a query: " + err);
-            return;
+            console.log("There was an error trying to execute query that retrieves all recipes: " + err);
+            callback(null);
         }    
         var myRecipeMap = new RecipeHelper();                    
         for(var i=0; i<rows.length; i++) { 

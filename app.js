@@ -11,10 +11,7 @@ var multer = require('multer');
 var path = require('path');
 var crypto = require('crypto');
 var mime = require('mime');
-var passport = require('passport'); //for user authentication
-var session = require('express-session');
-
-
+var session = require('client-sessions'); //for encrypted client-side sessions
 
 //static files
 app.use(express.static(__dirname + '/public'));
@@ -38,8 +35,16 @@ var multerStorage = multer.diskStorage({
 
 app.use(multer({ storage: multerStorage }).single('userphoto'));
 
-//required for passport
+//session
+app.use(session({
+    cookieName: 'session',
+    secret: 'randomstringgoeshere',
+    duration: 30 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000
+}));
 
+
+//app.use(session({ secret: 'thisisasessionsecretmessage', resave: false, saveUninitialized: false, cookie: {secure: true}}));
 
 //routes
 require('./app/routes.js')(app);

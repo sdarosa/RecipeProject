@@ -1,0 +1,17 @@
+<h1>{{ data.user.name }}'s Dashboard</h1>
+
+<div ng-if="data.result === 'no recipes'">
+    <p>{{ data.message }}</p>
+</div>
+
+<h2>Account Info</h2>
+<p>Name: {{ data.user.name }}<br/>
+Email: {{ data.user.email }}
+</p>
+
+<div ng-if="data.recipes !== null">
+    <h2>{{ data.user.name }}'s Recipes</h2>
+    <div class="smrecipe" ng-repeat="d in data.recipes">
+        <h3><a href="#onerecipe/{{ d.id }}">{{ d.title }}</a></h3>
+    </div>
+</div>

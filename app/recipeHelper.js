@@ -40,8 +40,9 @@ RecipeHelper.prototype.updateMap = function(r) {
 RecipeHelper.prototype.convertToArray = function() {
     var recipes = [];
     
-    for(var key of this.recipeMap.keys()) {
+    for(var key of this.recipeMap.keys()) {        
         var myRecipe = {
+            id: key,
             title: this.recipeMap.get(key).title,
             imagePath: this.recipeMap.get(key).imagePath,
             directions: this.recipeMap.get(key).directions,

@@ -5,6 +5,7 @@ function RecipeService() {
     
 }
 
+
 RecipeService.prototype.getAllRecipeNames = function(callback) {
     recipeDao.getRecipeNames(function(recipeNames) {
         callback(recipeNames);
@@ -19,8 +20,46 @@ RecipeService.prototype.getAllRecipeData = function(callback) {
     });
 };
 
+RecipeService.prototype.insertNewUser = function(userInfo, callback) {    
+    recipeDao.insertNewUser(userInfo, function(result) {
+       callback(result);
+    });
+};
+
+RecipeService.prototype.loginUser = function(userInfo, callback) {
+    recipeDao.loginUser(userInfo, function(err, user) {
+        if(err) {
+            console.log('error from recipe service: trying to login user');
+            callback(true, null);
+        } else {
+            console.log('login user successfull from recipe service, userId: ' + user.id + ' name: ' + user.name);
+            callback(false, user);
+        }
+    });
+}
+
+RecipeService.prototype.findUser = function(userEmail, callback) {
+    recipeDao.findUser(userEmail, function(found, user) {
+        callback(found, user);
+    });
+};
+
+RecipeService.prototype.getRecipesFromUserId = function(userId, callback) {
+    recipeDao.getRecipesFromUserId(userId, function(recipesMap) {
+        if(recipesMap == null) {
+            console.log('recipeService: user has no recipes');
+            callback(null);
+        } else {
+            //convert recipes map to array of recipe objects
+            var recipesArray = recipesMap.convertToArray();             
+            callback(recipesArray);
+        }
+    })
+};
+
 RecipeService.prototype.addNewRecipe = function(recipeFormValues, callback) {
     var recipeTableValues = {
+        user_id: recipeFormValues.user_id,
         title: recipeFormValues.title,
         image_path: recipeFormValues.image_path,
         directions: recipeFormValues.directions,

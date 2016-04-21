@@ -22,6 +22,14 @@ recipeApp.config(function($routeProvider) {
         .when('/login', {
             templateUrl: 'pages/login.html',
             controller: 'userLoginController'
+        })
+        .when('/signup', {
+            templateUrl: 'pages/registration.html',
+            controller: 'registrationController'
+        })
+        .when('/dashboard', {
+            templateUrl: 'pages/dashboard.html',
+            controller: 'dashboardController'
         });
 });
 
@@ -93,7 +101,27 @@ recipeApp.controller('newRecipeController', ['$scope', '$http', function($scope,
 }]);
 
 recipeApp.controller('userLoginController', ['$scope', function($scope) {
-    console.log('hi from userLoginController controller');
+    
+}]);
+
+recipeApp.controller('registrationController', ['$scope', function($scope) {
+    
+}]);
+
+recipeApp.controller('dashboardController', ['$scope', '$http', '$window', function($scope, $http, $window) {    
+    $scope.data = {};
+    $http.get('/user/dashboard')
+        .success(function(data) {        
+            if(data.result === "error") {
+                console.log('error');
+                $window.location.href = '/#/login';
+            } else {
+                $scope.data = data;
+            }
+        })
+        .error(function(err) {
+            console.log('Error trying to get recipes data from specified user');
+        });
 }]);
 
 
