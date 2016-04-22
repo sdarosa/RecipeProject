@@ -30,6 +30,9 @@ recipeApp.config(function($routeProvider) {
         .when('/dashboard', {
             templateUrl: 'pages/dashboard.html',
             controller: 'dashboardController'
+        })
+        .otherwise({
+            redirectTo: '/'
         });
 });
 
@@ -123,7 +126,3 @@ recipeApp.controller('dashboardController', ['$scope', '$http', '$window', funct
             console.log('Error trying to get recipes data from specified user');
         });
 }]);
-
-
-
-
