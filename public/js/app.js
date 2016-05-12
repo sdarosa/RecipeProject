@@ -38,6 +38,11 @@ recipeApp.config(function($routeProvider) {
 
 
 //controllers
+
+recipeApp.controller('menuController', ['$scope', function($scope) {
+    
+}]);
+
 recipeApp.controller('mainController', ['$scope', '$http', function($scope, $http) {
     $scope.data = {};
     

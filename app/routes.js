@@ -26,11 +26,24 @@ module.exports = function(app) {
         });       
     });
     
+    app.get('/admin', function(req, res) {
+        if(req.session && req.session.user) {
+            recipeService.findUser(req.session.user.email, function(found, user) {
+                if(found) {
+                    res.end('user is logged in');
+                } else {
+                    res.end('user is not logged in, redirect to login');
+                }
+            });
+        } else {
+            res.end('session doesnt exist, redirect to login');
+        }
+    });
+    
     app.get('/user/dashboard', function(req, res) {
         console.log('session on /user/dashboard');
         console.log(req.session);        
-        if(req.session && req.session.user) {   //check if session exists
-            console.log('hi from user recipes route');           
+        if(req.session && req.session.user) {   //check if session exists                    
             recipeService.findUser(req.session.user.email, function(found, user) {
                 if(!found) {
                     console.log('Error: could not find user with email: ' + req.session.email);
