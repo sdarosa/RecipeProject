@@ -8,12 +8,11 @@ module.exports = function(app) {
         recipeService.loginUser(req.body, function(err, user) {
             if(err) {
                 console.log("Error trying to log in user");
-                res.send('Error: wrong username or password');
+                res.json({err: 'IncorrectUserPasswordError'});
             } else {
                 req.session.user = user;
-                console.log('user logged in successfully');
-               // res.send('user logged in successfully: ' + user.id + ' name: ' + user.name);
-                res.redirect('/#/dashboard');
+                console.log('user logged in successfully');               
+                res.status(200).json({status: 'Login successful!'});
             }            
         });
     });
@@ -30,13 +29,17 @@ module.exports = function(app) {
         if(req.session && req.session.user) {
             recipeService.findUser(req.session.user.email, function(found, user) {
                 if(found) {
-                    res.end('user is logged in');
+                    console.log('user is logged in');
+                    console.log('user is: ' + req.session.user);
+                    res.send(req.user);
                 } else {
-                    res.end('user is not logged in, redirect to login');
+                    console.log('user not logged in, redirect to login');
+                    res.sendStatus(401);;
                 }
             });
         } else {
-            res.end('session doesnt exist, redirect to login');
+            console.log('session doesnt exist yet, guest user');
+            res.send('guest');
         }
     });
     
@@ -83,12 +86,11 @@ module.exports = function(app) {
     });
     
     app.get('/logout', function(req, res) {
-        console.log('hi from logout route');
-        if(req.session && req.session.user) {
-            //reset session
-            req.session.reset();
-            res.redirect('/');
-        }
+        console.log('hi from logout route');        
+        //reset session
+        req.session.reset();
+        res.redirect('/');
+        
     });
     
     app.get('/api/allrecipenames', function(req, res) {          
@@ -148,9 +150,10 @@ module.exports = function(app) {
             };               
             recipeService.addNewRecipe(recipeTableValues, function(savedToDb) {            
                 if(savedToDb) {
-                    res.end('Successfully saved recipe to db');
+                    //res.status(200).json({result: "New recipe saved successfully!"});
+                    res.redirect('/#/reciperesult');
                 } else {
-                    res.end('Error: Could not save to db');
+                    res.status(500).json({result: "Error trying to add new recipe"});                    
                 }
             });
         } else {

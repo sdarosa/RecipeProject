@@ -27,20 +27,137 @@ recipeApp.config(function($routeProvider) {
             templateUrl: 'pages/registration.html',
             controller: 'registrationController'
         })
+        .when('/logout', {
+            controller: 'logoutController'
+        })
         .when('/dashboard', {
             templateUrl: 'pages/dashboard.html',
             controller: 'dashboardController'
+        })
+        .when('/reciperesult', {
+            templateUrl: 'pages/reciperesult.html'
         })
         .otherwise({
             redirectTo: '/'
         });
 });
 
+//services
+recipeApp.service('menuService', function() {
+    var home = {
+        href: '/',
+        name: 'Home'
+    };
+    var allRecipes = {
+        href: '#recipes',
+        name: 'All Recipes'
+    };    
+    var login = {
+        href: '#login',
+        name: 'Login'
+    };
+    var signup = {
+        href: '#signup',
+        name: 'Sign Up'
+    };
+    var newRecipe = {
+        href: '#newrecipe',
+        name: 'New Recipe'
+    };
+    var userDashboard = {
+        href: '#dashboard',
+        name: 'My Recipes'
+    };
+    var logout = {
+        href: '/logout',
+        name: 'Logout'
+    };        
+    this.guestMenu = [home, allRecipes, login, signup];
+    this.userMenu = [home, allRecipes, newRecipe, userDashboard, logout];    
+});
+
+
+recipeApp.factory('authenticationService', ['$q', '$timeout', '$http', function($q, $timeout, $http) {
+    var user = null;    
+    return ({
+        isLoggedIn: isLoggedIn,
+        getUserStatus: getUserStatus,
+        login: login,
+        logout: logout,
+        register: register
+    });    
+    function isLoggedIn() {
+        if(user) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function getUserStatus() {
+        return user;
+    }
+    function login(userEmail, userPassword) {
+        var deferred = $q.defer();    
+        $http.post('/login', {userEmail: userEmail, userPassword: userPassword})
+            .success(function(data, status) {
+                if(status === 200 && data.status) {
+                    user = true;
+                    deferred.resolve();
+                } else {
+                    user = false;
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                user = false;
+                deferred.reject();
+            });        
+            //return promise object
+            return deferred.promise;
+    }
+    function logout() {
+        var deferred = $q.defer();
+        $http.get('/logout')
+            .success(function(data) {
+                user = false;
+                deferred.resolve();
+            })
+            .error(function(err) {
+                user = false;
+                deferred.reject();
+            });
+            return deferred.promise;
+    }
+    function register(userName, userEmail, userPassword) {
+        var deferred = $q.defer();
+        $http.post('/signup', {userName: userName, userEmail: userEmail, userPassword: userPassword})
+            .success(function(data, status) {
+                if(status === 200 && data.status) {
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            })
+            .error(function(err) {
+                deferred.reject();
+            });
+            return deferred.promise;
+    }
+}]);
 
 //controllers
-
-recipeApp.controller('menuController', ['$scope', function($scope) {
-    
+recipeApp.controller('menuController', ['menuService', '$scope', '$http', function(menuService, $scope, $http) {  
+    $http.get('/admin')
+        .success(function(data) {
+            if(data === 'guest') {
+                $scope.menu = menuService.guestMenu;
+            } else {
+                $scope.menu = menuService.userMenu;
+            }            
+        })
+        .error(function(err) {
+            console.log('error trying to get user type from admin');        
+        });
 }]);
 
 recipeApp.controller('mainController', ['$scope', '$http', function($scope, $http) {
@@ -71,7 +188,7 @@ recipeApp.controller('oneRecipeController', ['$scope', '$http', '$routeParams', 
     $scope.recipeId = $routeParams.id || -1;
     $scope.data = {};
     $http.get('/api/recipe/' + $scope.recipeId)
-        .success(function(data) {
+        .success(function(data) {           
             $scope.data = data;
         })
         .error(function(err) {
@@ -84,32 +201,40 @@ recipeApp.controller('newRecipeController', ['$scope', '$http', function($scope,
     //get category data to populate the category section of the new recipe form
     $http.get('/api/categoryList')
         .success(function(categoryData) {
-            $scope.categoryData = categoryData;
+            $scope.categoryData = categoryData;           
         })
         .error(function(err) {
             console.log('Error trying to get category data into new recipe form: ' + err);
         });
-    
-    
-    // $scope.formData = {};
-    // Object.keys($scope.formData).forEach(function(key) {
-    //     $scope.formData.append(key, $scope.formData[key]);
-    // });    
-    // //create a new recipe & add it to db
-    // $scope.createNewRecipe = function() {
-    //     $http.post('/api/newrecipe', $scope.formData)        
-    //        .success(function(data) {
-    //             console.log('posted successfully.');
-    //             console.log($scope.formData);
-    //        })
-    //        .error(function(err) {
-    //             console.log('Error: ' + err);
-    //           });
-    // };  
 }]);
 
-recipeApp.controller('userLoginController', ['$scope', function($scope) {
-    
+recipeApp.controller('userLoginController', ['$scope', '$window', 'authenticationService', function($scope, $window, authenticationService) {
+    $scope.login = function() {
+        //initial values
+        $scope.error = false;  
+        
+        //call login from service
+        authenticationService.login($scope.loginForm.userEmail, $scope.loginForm.userPassword)
+            .then(function() {
+                $window.location.href = '/';
+                $scope.loginForm = {}; //reset login info
+                
+            })
+            .catch(function() {
+                $scope.error = true;
+                $scope.errorMessage = "Wrong username and/or password, please try again";
+                $scope.loginForm = {};
+            });
+    };
+}]);
+
+recipeApp.controller('logoutController', ['$scope', '$window', 'authenticationService', function($scope, $window, authenticationService) {
+    $scope.logout = function() {
+        authenticationService.logout()
+            .then(function() {                
+                $window.location.href = '/login';                
+            });
+    };
 }]);
 
 recipeApp.controller('registrationController', ['$scope', function($scope) {
@@ -121,7 +246,7 @@ recipeApp.controller('dashboardController', ['$scope', '$http', '$window', funct
     $http.get('/user/dashboard')
         .success(function(data) {        
             if(data.result === "error") {
-                console.log('error');
+                console.log('error trying to login');
                 $window.location.href = '/#/login';
             } else {
                 $scope.data = data;

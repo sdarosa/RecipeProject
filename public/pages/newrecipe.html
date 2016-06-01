@@ -5,25 +5,25 @@
         <div class="col-md-12">
             <div class="form-group">
                 <label>Title</label>
-                <input type="text" class="form-control" id="title" name="title" placeholder="Creamy Pesto Mac with Spinach">
+                <input type="text" class="form-control" id="title" name="title" placeholder="Creamy Pesto Mac with Spinach" required>
             </div>
         </div>
         <div class="col-md-4">            
             <div class="form-group">
                 <label>Prep Time (mins)</label>
-                <input type="text" class="form-control" name="preptime" placeholder="15">
+                <input type="text" class="form-control" name="preptime" placeholder="15" required>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label>Cook Time (mins)</label>
-                <input type="text" class="form-control" name="cooktime" placeholder="15">
+                <input type="text" class="form-control" name="cooktime" placeholder="15" required>
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label>Servings</label>
-                <input type="text" class="form-control" id="serves" name="serves" placeholder="6 (1 cup each)">
+                <input type="text" class="form-control" id="serves" name="serves" placeholder="6 (1 cup each)" required>
             </div>
         </div>
         
@@ -35,18 +35,18 @@
         </div>
         <div class="col-md-12">
             <label>Ingredients (one per line)</label>
-            <textarea class="form-control" rows="5" name="ingredients"></textarea>
+            <textarea class="form-control" rows="5" name="ingredients" required></textarea>
         </div>
         <div class="col-md-12">
             <label>Directions</label>
-            <textarea class="form-control" rows="5" name="directions"></textarea>
+            <textarea class="form-control" rows="5" name="directions" required></textarea>
         </div>
         <div class="col-md-12">
             <label>Upload Image</label>
             <div class="input-group">                
                 <span class="input-group-btn">
                     <span class="btn btn-primary btn-file">
-                        Browse&hellip; <input type="file" name="userphoto" accept="application/x-zip-compressed,image/*">
+                        Browse&hellip; <input type="file" name="userphoto" accept="application/x-zip-compressed,image/*" required>
                     </span>
                 </span>
                 <input type="text" id="fileName" class="form-control" name="filename" readonly>
@@ -58,4 +58,5 @@
     </div>
 </form>
 
-<p>
+<div ng-show="error" class="alert alert-danger">{{ errorMessage }}</div>
+<div ng-show="success" class="alert alert-success">{{ successMessage }}</div>

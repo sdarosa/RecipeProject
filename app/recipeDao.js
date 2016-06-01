@@ -93,6 +93,9 @@ RecipeDao.prototype.loginUser = function(userInfo, callback) {
                 name: rows[0].user_name
             };            
             callback(false, user);
+        } else {
+            console.log('Error with username and/or password. User does not exist');
+            callback(true, user);
         }
     });    
 };
