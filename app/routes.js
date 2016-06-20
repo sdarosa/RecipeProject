@@ -84,6 +84,16 @@ module.exports = function(app) {
             res.json({ result: 'error', message: 'user needs to login', user: null, recipes: null });
         }
     });
+
+    app.delete("/api/recipe:id", function(req, res) {
+        var id = req.params.id;
+        recipeService.deleteRecipeGivenId(id, function(err, result) {
+            if(err) {
+                console.log('Error trying to delete recipe with id: ' + id + '\nMsg: ' + err);
+            }  
+
+        });
+    });
     
     app.get('/logout', function(req, res) {
         console.log('hi from logout route');        
