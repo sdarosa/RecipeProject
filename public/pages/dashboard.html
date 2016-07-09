@@ -13,6 +13,7 @@ Email: {{ data.user.email }}
     <h2>{{ data.user.name }}'s Recipes</h2>
     <div class="smrecipe" ng-repeat="d in data.recipes">
         <h3><a href="#onerecipe/{{ d.id }}">{{ d.title }}</a></h3>
-       
+        <a href="">Edit</a> |
+        <a href="">Delete</a>
     </div>
 </div>
