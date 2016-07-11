@@ -85,13 +85,16 @@ module.exports = function(app) {
         }
     });
 
-    app.delete("/api/recipe:id", function(req, res) {
-        var id = req.params.id;
+    app.delete("/api/recipe/:recipe_id", function(req, res) {
+        var recipeId = req.params.recipe_id;
+
         recipeService.deleteRecipeGivenId(id, function(err, result) {
             if(err) {
-                console.log('Error trying to delete recipe with id: ' + id + '\nMsg: ' + err);
+                console.log('Error trying to delete recipe with id: ' + recipeId + '\nMsg: ' + err);
+                res.send(err);
+            } else {
+                res.json(result);
             }  
-
         });
     });
     

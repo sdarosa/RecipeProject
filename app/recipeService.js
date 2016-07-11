@@ -102,3 +102,9 @@ RecipeService.prototype.getRecipeGivenId = function(id, callback) {
         callback(recipeObject);
     });
 };
+
+RecipeService.prototype.deleteRecipeGivenId = function(recipeId, callback) {
+    recipeDao.deleteRecipeGivenId(recipeId, function(result) {
+        callback(  )
+    });
+};
